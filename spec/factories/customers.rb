@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :customer do
-    name { Faker::TvShows::SiliconValley.character }
+    first_name { Faker::TvShows::SiliconValley.character }
+    last_name { Faker::TvShows::SiliconValley.character }
   end
 end
