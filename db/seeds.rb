@@ -19,6 +19,8 @@ end
 
 CSV.foreach('./data/items.csv', headers: true, header_converters: :symbol) do |row|
   Item.create!(row.to_h)
+  price = Item.last.unit_price / 100
+  Item.last.update(unit_price: price)
 end
 
 CSV.foreach('./data/customers.csv', headers: true, header_converters: :symbol) do |row|
@@ -35,4 +37,6 @@ end
 
 CSV.foreach('./data/invoice_items.csv', headers: true, header_converters: :symbol) do |row|
   InvoiceItem.create!(row.to_h)
+  price = InvoiceItem.last.unit_price / 100
+  InvoiceItem.last.update(unit_price: price)
 end
