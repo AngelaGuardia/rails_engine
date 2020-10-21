@@ -215,6 +215,59 @@ describe "Merchants API" do
       expect(merchant_data[:data].size).to eq(1)
     end
 
+    it "finds one merchant from case insensitive search" do
+      merchant1 = Merchant.create(name: "King's shopper")
+      merchant2 = Merchant.create(name: "Quiosquito de kingsito")
+      merchant3 = Merchant.create(name: "Queen's shopper")
+      merchant4 = Merchant.create(name: "Queen B's")
+      merchant5 = Merchant.create(name: "La Queen")
+
+      # search with one hit
+      get "/api/v1/merchants/find_all", params: { name: "Quiosquito" }
+      expect(response).to be_successful
+
+      merchant_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(merchant_data).to have_key(:data)
+      expect(merchant_data[:data]).to be_an(Array)
+      serializer_structure_check(merchant_data[:data].first)
+
+      result_merchant = Merchant.find(merchant_data[:data].first[:id])
+
+      expect(result_merchant).to eq(merchant2)
+
+      # multiple hit search
+      get "/api/v1/merchants/find_all", params: { name: "Queen" }
+      expect(response).to be_successful
+
+      merchant_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(merchant_data).to have_key(:data)
+      expect(merchant_data[:data]).to be_an(Array)
+      serializer_structure_check(merchant_data[:data].first)
+
+      expect(merchant_data[:data].count).to eq(3)
+
+      merchant_data[:data].each do |merchant|
+        expect([merchant3, merchant4, merchant5].include? Merchant.find(merchant[:id])).to be_truthy
+      end
+
+      # Mutiple hit search case insensitive
+      get "/api/v1/merchants/find_all", params: { name: "king" }
+      expect(response).to be_successful
+
+      merchant_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(merchant_data).to have_key(:data)
+      expect(merchant_data[:data]).to be_an(Array)
+      serializer_structure_check(merchant_data[:data].first)
+
+      expect(merchant_data[:data].size).to eq(2)
+      merchant_data[:data].each do |merchant|
+        expect([merchant1, merchant2].include? Merchant.find(merchant[:id])).to be_truthy
+      end
+    end
+
     def serializer_structure_check(merchant)
       expect(merchant).to have_key(:id)
       expect(merchant[:id]).to be_a(String)
