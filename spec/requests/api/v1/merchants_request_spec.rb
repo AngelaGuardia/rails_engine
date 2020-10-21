@@ -48,7 +48,7 @@ describe "Merchants API" do
 
     headers = {"CONTENT_TYPE" => "application/json"}
 
-    post '/api/v1/merchants', headers: headers, params: JSON.generate(merchant: merchant_params)
+    post '/api/v1/merchants', headers: headers, params: JSON.generate(merchant_params)
 
     expect(response).to be_successful
     merchants_data = JSON.parse(response.body, symbolize_names: true)
@@ -71,7 +71,7 @@ describe "Merchants API" do
 
     headers = {"CONTENT_TYPE" => "application/json"}
 
-    patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate({merchant: merchant_params})
+    patch "/api/v1/merchants/#{id}", headers: headers, params: JSON.generate(merchant_params)
 
     merchants_data = JSON.parse(response.body, symbolize_names: true)
 
@@ -98,14 +98,6 @@ describe "Merchants API" do
 
     expect(Merchant.count).to eq(1)
     expect{Merchant.find(merchant.id)}.to raise_error(ActiveRecord::RecordNotFound)
-
-    merchants_data = JSON.parse(response.body, symbolize_names: true)
-
-    expect(merchants_data).to have_key(:data)
-    expect(merchants_data[:data]).to be_an(Hash)
-
-    merchant = merchants_data[:data]
-    serializer_structure_check(merchant)
   end
 
   def serializer_structure_check(merchant)
