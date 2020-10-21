@@ -27,5 +27,28 @@ RSpec.describe Merchant, type: :model do
       result = Merchant.single_finder({name: 'shopper'})
       expect(result.count).to eq(1)
     end
+
+    it "#multi_finder" do
+      merchant1 = Merchant.create(name: "King's shopper")
+      merchant2 = Merchant.create(name: "Quiosquito de kingsito")
+      merchant3 = Merchant.create(name: "Queen's shopper")
+      merchant4 = Merchant.create(name: "Queen B's")
+      merchant5 = Merchant.create(name: "La Queen")
+
+      result = Merchant.multi_finder({name: 'Quiosquito'})
+      expect(result.first).to eq(merchant2)
+
+      result = Merchant.multi_finder({name: 'Queen'})
+      expect(result.size).to eq(3)
+      result.each do |merchant|
+        expect([merchant3, merchant4, merchant5].include? Merchant.find(merchant[:id])).to be_truthy
+      end
+
+      result = Merchant.multi_finder({name: 'king'})
+      expect(result.count).to eq(2)
+      result.each do |merchant|
+        expect([merchant1, merchant2].include? Merchant.find(merchant[:id])).to be_truthy
+      end
+    end
   end
 end
