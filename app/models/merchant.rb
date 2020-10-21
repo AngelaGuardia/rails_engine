@@ -3,4 +3,12 @@ class Merchant < ApplicationRecord
   has_many :invoices, :dependent => :delete_all
 
   validates_presence_of :name
+
+  def self.single_finder(params)
+    Merchant.where("LOWER(merchants.name) LIKE LOWER('%#{params[:name]}%')").limit(1).first
+  end
+
+  def self.multi_finder(params)
+    Merchant.where("LOWER(merchants.name) LIKE LOWER('%#{params[:name]}%')")
+  end
 end
