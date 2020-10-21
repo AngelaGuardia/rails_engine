@@ -16,4 +16,14 @@ class Item < ApplicationRecord
       end
     end
   end
+
+  def self.multi_finder(params)
+    params.each do |attribute, value|
+      if ["name", "description"].include? attribute.to_s
+        return Item.where("LOWER(items.#{attribute}) LIKE LOWER('%#{value}%')")
+      else
+        return Item.where("items.#{attribute} = #{value}")
+      end
+    end
+  end
 end
