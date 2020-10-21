@@ -285,6 +285,112 @@ describe "Items API" do
       # serializer_structure_check(item_data[:data])
     end
 
+    it "finds multiple items from case insensitive search" do
+      merchant1 = create(:merchant)
+      merchant2 = create(:merchant)
+      item1 = Item.create(name: "Golf club", description: "The most powerful club ever", unit_price: 109.89, merchant: merchant1)
+      item2 = Item.create(name: "Club Soda", description: "Best drink you have ever tasted", unit_price: 50.89, merchant: merchant2)
+      item3 = Item.create(name: "Soda can", description: "It's a can", unit_price: 50.89, merchant: merchant2)
+      item4 = Item.create(name: "Soda shop", description: "welcome to the soda shop", unit_price: 60, merchant: merchant2)
+
+      # search by name
+
+      # One hit search
+      get "/api/v1/items/find_all", params: { name: "Golf" }
+      expect(response).to be_successful
+
+      item_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(item_data).to have_key(:data)
+      expect(item_data[:data]).to be_an(Array)
+      serializer_structure_check(item_data[:data].first)
+
+      result_item = Item.find(item_data[:data].first[:id])
+
+      expect(result_item).to eq(item1)
+
+      # Multiple hit search
+      get "/api/v1/items/find_all", params: { name: "Soda" }
+      expect(response).to be_successful
+
+      item_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(item_data).to have_key(:data)
+      expect(item_data[:data]).to be_an(Array)
+      expect(item_data[:data].size).to eq(3)
+      serializer_structure_check(item_data[:data].first)
+
+      item_data[:data].each do |item|
+        expect([item2, item3, item4].include? Item.find(item[:id])).to be_truthy
+      end
+
+      # Multiple hit search case insensitive returns one result
+      get "/api/v1/items/find_all", params: { name: "club" }
+      expect(response).to be_successful
+
+      item_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(item_data).to have_key(:data)
+      expect(item_data[:data]).to be_an(Array)
+      expect(item_data[:data].size).to eq(2)
+      serializer_structure_check(item_data[:data].first)
+
+      item_data[:data].each do |item|
+        expect([item1, item2].include? Item.find(item[:id])).to be_truthy
+      end
+
+      # search by description
+
+      get "/api/v1/items/find_all", params: { description: "ever" }
+      expect(response).to be_successful
+
+      item_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(item_data).to have_key(:data)
+      expect(item_data[:data]).to be_an(Array)
+      expect(item_data[:data].size).to eq(2)
+      serializer_structure_check(item_data[:data].first)
+
+      item_data[:data].each do |item|
+        expect([item1, item2].include? Item.find(item[:id])).to be_truthy
+      end
+
+      # search by unit_price
+
+      get "/api/v1/items/find_all", params: { unit_price: 50.89 }
+      expect(response).to be_successful
+
+      item_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(item_data).to have_key(:data)
+      expect(item_data[:data]).to be_an(Array)
+      expect(item_data[:data].size).to eq(2)
+      serializer_structure_check(item_data[:data].first)
+
+      item_data[:data].each do |item|
+        expect([item3, item2].include? Item.find(item[:id])).to be_truthy
+      end
+
+      # search by merchant_id
+
+      get "/api/v1/items/find_all", params: { merchant_id: merchant2.id }
+      expect(response).to be_successful
+
+      item_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(item_data).to have_key(:data)
+      expect(item_data[:data]).to be_an(Array)
+      expect(item_data[:data].size).to eq(3)
+      serializer_structure_check(item_data[:data].first)
+
+      item_data[:data].each do |item|
+        expect([item2, item3, item4].include? Item.find(item[:id])).to be_truthy
+      end
+
+      # created_at test
+      # updated_at test
+    end
+
     def serializer_structure_check(item)
       expect(item).to have_key(:id)
       expect(item[:id]).to be_an(String)
