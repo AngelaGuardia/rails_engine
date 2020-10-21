@@ -7,4 +7,8 @@ class Merchant < ApplicationRecord
   def self.single_finder(params)
     Merchant.where("LOWER(merchants.name) LIKE LOWER('%#{params[:name]}%')").limit(1)
   end
+
+  def self.multi_finder(params)
+    Merchant.where("LOWER(merchants.name) LIKE LOWER('%#{params[:name]}%')")
+  end
 end
