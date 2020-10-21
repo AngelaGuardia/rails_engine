@@ -181,10 +181,10 @@ describe "Merchants API" do
       merchant_data = JSON.parse(response.body, symbolize_names: true)
 
       expect(merchant_data).to have_key(:data)
-      expect(merchant_data[:data]).to be_an(Array)
-      serializer_structure_check(merchant_data[:data].first)
+      expect(merchant_data[:data]).to be_an(Hash)
+      serializer_structure_check(merchant_data[:data])
 
-      result_merchant = Merchant.find(merchant_data[:data].first[:id])
+      result_merchant = Merchant.find(merchant_data[:data][:id])
 
       expect(result_merchant).to eq(merchant1)
 
@@ -195,10 +195,10 @@ describe "Merchants API" do
       merchant_data = JSON.parse(response.body, symbolize_names: true)
 
       expect(merchant_data).to have_key(:data)
-      expect(merchant_data[:data]).to be_an(Array)
-      serializer_structure_check(merchant_data[:data].first)
+      expect(merchant_data[:data]).to be_an(Hash)
+      serializer_structure_check(merchant_data[:data])
 
-      result_merchant = Merchant.find(merchant_data[:data].first[:id])
+      result_merchant = Merchant.find(merchant_data[:data][:id])
 
       expect(result_merchant).to eq(merchant2)
 
@@ -209,13 +209,11 @@ describe "Merchants API" do
       merchant_data = JSON.parse(response.body, symbolize_names: true)
 
       expect(merchant_data).to have_key(:data)
-      expect(merchant_data[:data]).to be_an(Array)
-      serializer_structure_check(merchant_data[:data].first)
-
-      expect(merchant_data[:data].size).to eq(1)
+      expect(merchant_data[:data]).to be_an(Hash)
+      serializer_structure_check(merchant_data[:data])
     end
 
-    it "finds one merchant from case insensitive search" do
+    it "finds multiple merchants from case insensitive search" do
       merchant1 = Merchant.create(name: "King's shopper")
       merchant2 = Merchant.create(name: "Quiosquito de kingsito")
       merchant3 = Merchant.create(name: "Queen's shopper")

@@ -5,7 +5,7 @@ class Merchant < ApplicationRecord
   validates_presence_of :name
 
   def self.single_finder(params)
-    Merchant.where("LOWER(merchants.name) LIKE LOWER('%#{params[:name]}%')").limit(1)
+    Merchant.where("LOWER(merchants.name) LIKE LOWER('%#{params[:name]}%')").limit(1).first
   end
 
   def self.multi_finder(params)
