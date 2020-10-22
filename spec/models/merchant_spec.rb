@@ -67,7 +67,7 @@ RSpec.describe Merchant, type: :model do
       merchant3 = create(:merchant)
       item3 = create(:item, merchant: merchant3)
       invoice3 = create(:invoice, merchant: merchant3)
-      create(:invoice_item, item: item3, quantity: 3, unit_price: 3.0, invoice: invoice3)
+      invoice_item3 = create(:invoice_item, item: item3, quantity: 3, unit_price: 3.0, invoice: invoice3)
       transaction3 = create(:transaction, invoice: invoice3)
 
       result = Merchant.most_revenue({ quantity: 3 })
