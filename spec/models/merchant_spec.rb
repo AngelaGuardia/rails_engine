@@ -89,5 +89,44 @@ RSpec.describe Merchant, type: :model do
       expect(result[0]).not_to eq(merchant2)
       expect(result[0]).to eq(merchant1)
     end
+
+    it "#most_items" do
+      merchant1 = create(:merchant)
+      item1 = create(:item, merchant: merchant1)
+      invoice1 = create(:invoice, merchant: merchant1)
+      create(:invoice_item, item: item1, quantity: 1, unit_price: 1.0, invoice: invoice1)
+      transaction1 = create(:transaction, invoice: invoice1)
+
+      merchant2 = create(:merchant)
+      item2 = create(:item, merchant: merchant2)
+      invoice2 = create(:invoice, merchant: merchant2)
+      create(:invoice_item, item: item2, quantity: 2, unit_price: 2.0, invoice: invoice2)
+      transaction2 = create(:transaction, invoice: invoice2)
+
+      merchant3 = create(:merchant)
+      item3 = create(:item, merchant: merchant3)
+      invoice3 = create(:invoice, merchant: merchant3)
+      invoice_item3 = create(:invoice_item, item: item3, quantity: 3, unit_price: 3.0, invoice: invoice3)
+      transaction3 = create(:transaction, invoice: invoice3)
+
+      result = Merchant.most_items({ quantity: 3 })
+      expect(result[0]).to eq(merchant3)
+      expect(result[1]).to eq(merchant2)
+      expect(result[2]).to eq(merchant1)
+
+      # does not include failed transactions
+      transaction3.update(result: "failed")
+
+      result = Merchant.most_items({ quantity: 3 })
+      expect(result[0]).not_to eq(merchant3)
+      expect(result[0]).to eq(merchant2)
+
+      # does not include packaged invoices
+      invoice2.update(status: 'packaged')
+
+      result = Merchant.most_items({ quantity: 3 })
+      expect(result[0]).not_to eq(merchant2)
+      expect(result[0]).to eq(merchant1)
+    end
   end
 end
