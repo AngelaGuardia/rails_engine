@@ -223,4 +223,10 @@ describe "Merchants API" do
       end
     end
   end
+
+  describe "business intelligence" do
+    it "merchants with the most revenue" do
+      
+    end
+  end
 end
