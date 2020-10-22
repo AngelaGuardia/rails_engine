@@ -22,7 +22,7 @@ describe "Merchants API" do
 
       merchants = merchants_data[:data]
       merchant = merchants.first
-      serializer_structure_check(merchant)
+      merchant_serializer_structure_check(merchant)
 
       expect(merchants.count).to eq(2)
     end
@@ -39,7 +39,7 @@ describe "Merchants API" do
       expect(merchants_data[:data]).to be_an(Hash)
 
       merchant = merchants_data[:data]
-      serializer_structure_check(merchant)
+      merchant_serializer_structure_check(merchant)
 
       expect(merchant[:attributes][:id]).to eq(merchant_object.id)
     end
@@ -58,7 +58,7 @@ describe "Merchants API" do
       expect(merchants_data[:data]).to be_an(Hash)
 
       merchant = merchants_data[:data]
-      serializer_structure_check(merchant)
+      merchant_serializer_structure_check(merchant)
 
       merchant_object = Merchant.last
 
@@ -81,7 +81,7 @@ describe "Merchants API" do
       expect(merchants_data[:data]).to be_an(Hash)
 
       merchant = merchants_data[:data]
-      serializer_structure_check(merchant)
+      merchant_serializer_structure_check(merchant)
 
       merchant_object = Merchant.find_by(id: id)
 
@@ -100,31 +100,6 @@ describe "Merchants API" do
 
       expect(Merchant.count).to eq(1)
       expect{Merchant.find(merchant.id)}.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
-    def serializer_structure_check(merchant)
-      expect(merchant).to have_key(:id)
-      expect(merchant[:id]).to be_a(String)
-
-      expect(merchant).to have_key(:type)
-      expect(merchant[:type]).to be_a(String)
-      expect(merchant[:type]).to eq("merchant")
-
-      expect(merchant).to have_key(:attributes)
-      expect(merchant[:attributes]).to be_a(Hash)
-
-      expect(merchant[:attributes]).to have_key(:name)
-      expect(merchant[:attributes][:name]).to be_a(String)
-
-      expect(merchant[:attributes]).to have_key(:id)
-      expect(merchant[:attributes][:id]).to be_an(Integer)
-
-      expect(merchant).to have_key(:relationships)
-      expect(merchant[:relationships]).to be_a(Hash)
-      expect(merchant[:relationships]).to have_key(:items)
-      expect(merchant[:relationships][:items]).to be_a(Hash)
-      expect(merchant[:relationships]).to have_key(:invoices)
-      expect(merchant[:relationships][:invoices]).to be_a(Hash)
     end
   end
 
@@ -147,25 +122,7 @@ describe "Merchants API" do
       expect(items_data[:data].size).to eq(2)
       expect(items_data[:data].first[:id]).to eq(itemB1.id.to_s)
 
-      serializer_structure_check(items_data[:data].first)
-    end
-
-    def serializer_structure_check(item)
-      expect(item).to have_key(:id)
-      expect(item[:id]).to be_a(String)
-
-      expect(item).to have_key(:type)
-      expect(item[:type]).to be_a(String)
-      expect(item[:type]).to eq("item")
-
-      expect(item).to have_key(:attributes)
-      expect(item[:attributes]).to be_a(Hash)
-
-      expect(item[:attributes]).to have_key(:name)
-      expect(item[:attributes][:name]).to be_a(String)
-
-      expect(item[:attributes]).to have_key(:id)
-      expect(item[:attributes][:id]).to be_an(Integer)
+      item_serializer_structure_check(items_data[:data].first)
     end
   end
 
@@ -182,7 +139,7 @@ describe "Merchants API" do
 
       expect(merchant_data).to have_key(:data)
       expect(merchant_data[:data]).to be_an(Hash)
-      serializer_structure_check(merchant_data[:data])
+      merchant_serializer_structure_check(merchant_data[:data])
 
       result_merchant = Merchant.find(merchant_data[:data][:id])
 
@@ -196,7 +153,7 @@ describe "Merchants API" do
 
       expect(merchant_data).to have_key(:data)
       expect(merchant_data[:data]).to be_an(Hash)
-      serializer_structure_check(merchant_data[:data])
+      merchant_serializer_structure_check(merchant_data[:data])
 
       result_merchant = Merchant.find(merchant_data[:data][:id])
 
@@ -210,7 +167,7 @@ describe "Merchants API" do
 
       expect(merchant_data).to have_key(:data)
       expect(merchant_data[:data]).to be_an(Hash)
-      serializer_structure_check(merchant_data[:data])
+      merchant_serializer_structure_check(merchant_data[:data])
     end
 
     it "finds multiple merchants from case insensitive search" do
@@ -228,7 +185,7 @@ describe "Merchants API" do
 
       expect(merchant_data).to have_key(:data)
       expect(merchant_data[:data]).to be_an(Array)
-      serializer_structure_check(merchant_data[:data].first)
+      merchant_serializer_structure_check(merchant_data[:data].first)
 
       result_merchant = Merchant.find(merchant_data[:data].first[:id])
 
@@ -242,7 +199,7 @@ describe "Merchants API" do
 
       expect(merchant_data).to have_key(:data)
       expect(merchant_data[:data]).to be_an(Array)
-      serializer_structure_check(merchant_data[:data].first)
+      merchant_serializer_structure_check(merchant_data[:data].first)
 
       expect(merchant_data[:data].count).to eq(3)
 
@@ -258,37 +215,12 @@ describe "Merchants API" do
 
       expect(merchant_data).to have_key(:data)
       expect(merchant_data[:data]).to be_an(Array)
-      serializer_structure_check(merchant_data[:data].first)
+      merchant_serializer_structure_check(merchant_data[:data].first)
 
       expect(merchant_data[:data].size).to eq(2)
       merchant_data[:data].each do |merchant|
         expect([merchant1, merchant2].include? Merchant.find(merchant[:id])).to be_truthy
       end
-    end
-
-    def serializer_structure_check(merchant)
-      expect(merchant).to have_key(:id)
-      expect(merchant[:id]).to be_a(String)
-
-      expect(merchant).to have_key(:type)
-      expect(merchant[:type]).to be_a(String)
-      expect(merchant[:type]).to eq("merchant")
-
-      expect(merchant).to have_key(:attributes)
-      expect(merchant[:attributes]).to be_a(Hash)
-
-      expect(merchant[:attributes]).to have_key(:name)
-      expect(merchant[:attributes][:name]).to be_a(String)
-
-      expect(merchant[:attributes]).to have_key(:id)
-      expect(merchant[:attributes][:id]).to be_an(Integer)
-
-      expect(merchant).to have_key(:relationships)
-      expect(merchant[:relationships]).to be_a(Hash)
-      expect(merchant[:relationships]).to have_key(:items)
-      expect(merchant[:relationships][:items]).to be_a(Hash)
-      expect(merchant[:relationships]).to have_key(:invoices)
-      expect(merchant[:relationships][:invoices]).to be_a(Hash)
     end
   end
 end
