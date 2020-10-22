@@ -22,4 +22,13 @@ class Merchant < ApplicationRecord
       .order("revenue DESC")
       .limit(params[:quantity])
   end
+
+  def self.most_items(params)
+    joins(invoices: [:invoice_items, :transactions])
+      .select("merchants.id, merchants.name, sum(invoice_items.quantity) AS total")
+      .where("invoices.status = 'shipped' AND transactions.result = 'success'")
+      .group("merchants.id")
+      .order("total DESC")
+      .limit(params[:quantity])
+  end
 end
