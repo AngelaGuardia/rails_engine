@@ -330,5 +330,23 @@ describe "Merchants API" do
       revenue_data = JSON.parse(response.body, symbolize_names: true)
       expect(revenue_data[:data][:attributes][:revenue]).to eq(0)
     end
+
+    it "returns revenue for a merchant" do
+      get "/api/v1/merchants/#{@merchant1.id}/revenue"
+      expect(response).to be_successful
+
+      revenue_data = JSON.parse(response.body, symbolize_names: true)
+
+      expect(revenue_data).to have_key(:data)
+      expect(revenue_data[:data]).to be_an(Hash)
+      expect(revenue_data[:data]).to have_key(:id)
+      expect(revenue_data[:data][:id]).to eq(nil)
+      expect(revenue_data[:data]).to have_key(:attributes)
+      expect(revenue_data[:data][:attributes]).to be_a(Hash)
+      expect(revenue_data[:data][:attributes]).to have_key(:revenue)
+      expect(revenue_data[:data][:attributes][:revenue]).to be_a(Float)
+
+      expect(revenue_data[:data][:attributes][:revenue]).to eq(1)
+    end
   end
 end
