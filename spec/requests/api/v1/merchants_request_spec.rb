@@ -228,19 +228,19 @@ describe "Merchants API" do
     before :each do
       @merchant1 = create(:merchant)
       item1 = create(:item, merchant: @merchant1)
-      invoice1 = create(:invoice, merchant: @merchant1)
+      invoice1 = create(:invoice, merchant: @merchant1, created_at: 2.days.ago)
       create(:invoice_item, item: item1, quantity: 1, unit_price: 1.0, invoice: invoice1)
       transaction1 = create(:transaction, invoice: invoice1)
 
       @merchant2 = create(:merchant)
       item2 = create(:item, merchant: @merchant2)
-      invoice2 = create(:invoice, merchant: @merchant2)
+      invoice2 = create(:invoice, merchant: @merchant2, created_at: DateTime.now)
       create(:invoice_item, item: item2, quantity: 2, unit_price: 2.0, invoice: invoice2)
       transaction2 = create(:transaction, invoice: invoice2)
 
       @merchant3 = create(:merchant)
       item3 = create(:item, merchant: @merchant3)
-      invoice3 = create(:invoice, merchant: @merchant3)
+      invoice3 = create(:invoice, merchant: @merchant3, created_at: DateTime.now + 2.days)
       create(:invoice_item, item: item3, quantity: 3, unit_price: 3.0, invoice: invoice3)
       transaction3 = create(:transaction, invoice: invoice3)
     end
@@ -295,6 +295,40 @@ describe "Merchants API" do
 
       get "/api/v1/merchants/most_items", params: { quantity: 0 }
       expect(response).to be_successful
+    end
+
+    it "returns total revenue for all merchants over a date range" do
+      get '/api/v1/revenue', params: { start: 3.days.ago.to_s, end: (Date.today + 3.days).to_s}
+      expect(response).to be_successful
+
+      revenue_data = JSON.parse(response.body, symbolize_names: true)
+      expect(revenue_data).to have_key(:data)
+      expect(revenue_data[:data]).to be_an(Hash)
+      expect(revenue_data[:data]).to have_key(:id)
+      expect(revenue_data[:data][:id]).to eq(nil)
+      expect(revenue_data[:data]).to have_key(:attributes)
+      expect(revenue_data[:data][:attributes]).to be_a(Hash)
+      expect(revenue_data[:data][:attributes]).to have_key(:revenue)
+      expect(revenue_data[:data][:attributes][:revenue]).to be_a(Float)
+      expect(revenue_data[:data][:attributes][:revenue]).to eq(14)
+
+      get '/api/v1/revenue', params: { start: 1.days.ago.to_s, end: (Date.today + 3.days).to_s}
+      expect(response).to be_successful
+
+      revenue_data = JSON.parse(response.body, symbolize_names: true)
+      expect(revenue_data[:data][:attributes][:revenue]).to eq(13)
+
+      get '/api/v1/revenue', params: { start: 2.days.ago.to_s, end: (Date.today + 1.days).to_s}
+      expect(response).to be_successful
+
+      revenue_data = JSON.parse(response.body, symbolize_names: true)
+      expect(revenue_data[:data][:attributes][:revenue]).to eq(5)
+
+      get '/api/v1/revenue', params: { start: (Date.today + 5.days).to_s, end: (Date.today + 10.days).to_s}
+      expect(response).to be_successful
+
+      revenue_data = JSON.parse(response.body, symbolize_names: true)
+      expect(revenue_data[:data][:attributes][:revenue]).to eq(0)
     end
   end
 end
