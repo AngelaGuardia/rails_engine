@@ -15,6 +15,8 @@ Rails.application.routes.draw do
       resources :merchants do
         get :items, to: 'merchants/items#index'
       end
+
+      get '/revenue', to: 'merchants/business_intelligence#revenue_over_range'
     end
   end
 end
