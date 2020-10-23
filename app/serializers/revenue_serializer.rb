@@ -1,5 +1,5 @@
 class RevenueSerializer
-  def self.revenue_over_range(rev)
+  def self.revenue(rev)
     {
       "data":
       {
