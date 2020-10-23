@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       get '/merchants/most_items', to: 'merchants/business_intelligence#most_items'
       resources :merchants do
         get :items, to: 'merchants/items#index'
+        get :revenue, to: 'merchants/business_intelligence#total_revenue'
       end
 
       get '/revenue', to: 'merchants/business_intelligence#revenue_over_range'
