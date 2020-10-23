@@ -8,6 +8,10 @@ class Api::V1::Merchants::BusinessIntelligenceController < ApplicationController
   end
 
   def revenue_over_range
-    render json: RevenueSerializer.revenue_over_range(Merchant.revenue_over_range(params))
+    render json: RevenueSerializer.revenue(Merchant.revenue_over_range(params))
+  end
+
+  def total_revenue
+    render json: RevenueSerializer.revenue(Merchant.total_revenue(params))
   end
 end
