@@ -164,5 +164,25 @@ RSpec.describe Merchant, type: :model do
       result = Merchant.revenue_over_range(range)
       expect(result).to eq(0)
     end
+
+    it "#total_revenue" do
+      merchant1 = create(:merchant)
+      item1 = create(:item, merchant: merchant1)
+      invoice1 = create(:invoice, merchant: merchant1)
+      create(:invoice_item, item: item1, quantity: 1, unit_price: 1.0, invoice: invoice1)
+      transaction1 = create(:transaction, invoice: invoice1)
+
+      merchant2 = create(:merchant)
+      item2 = create(:item, merchant: merchant2)
+      invoice2 = create(:invoice, merchant: merchant2)
+      create(:invoice_item, item: item2, quantity: 2, unit_price: 2.0, invoice: invoice2)
+      transaction2 = create(:transaction, invoice: invoice2)
+
+      revenue = Merchant.total_revenue({ merchant_id: merchant1.id })
+      expect(revenue).to eq(1)
+
+      revenue = Merchant.total_revenue({ merchant_id: merchant2.id })
+      expect(revenue).to eq(4)
+    end
   end
 end
