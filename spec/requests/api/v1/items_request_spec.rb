@@ -15,7 +15,7 @@ describe "Items API" do
       expect(items_data[:data]).to be_an(Array)
 
       items = items_data[:data]
-      serializer_structure_check(items.first)
+      item_serializer_structure_check(items.first)
 
       expect(items.count).to eq(3)
     end
@@ -33,7 +33,7 @@ describe "Items API" do
       expect(item_data[:data]).to be_an(Hash)
 
       item = item_data[:data]
-      serializer_structure_check(item)
+      item_serializer_structure_check(item)
     end
 
     it "can create a new item" do
@@ -61,7 +61,7 @@ describe "Items API" do
       expect(item_data[:data]).to be_an(Hash)
 
       item = item_data[:data]
-      serializer_structure_check(item)
+      item_serializer_structure_check(item)
     end
 
     it "can update an item" do
@@ -85,7 +85,7 @@ describe "Items API" do
       expect(item_data[:data]).to be_an(Hash)
 
       item = item_data[:data]
-      serializer_structure_check(item)
+      item_serializer_structure_check(item)
     end
 
     it "can destroy an item" do
@@ -99,45 +99,6 @@ describe "Items API" do
       expect(response).to be_successful
       expect(Item.count).to eq(0)
       expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
-    def serializer_structure_check(item)
-      expect(item).to have_key(:id)
-      expect(item[:id]).to be_an(String)
-
-      expect(item).to have_key(:type)
-      expect(item[:type]).to be_an(String)
-      expect(item[:type]).to eq("item")
-
-      expect(item).to have_key(:attributes)
-      expect(item[:attributes]).to be_a(Hash)
-
-      expect(item[:attributes]).to have_key(:id)
-      expect(item[:attributes][:id]).to be_an(Integer)
-
-      expect(item[:attributes]).to have_key(:name)
-      expect(item[:attributes][:name]).to be_an(String)
-
-      expect(item[:attributes]).to have_key(:description)
-      expect(item[:attributes][:description]).to be_an(String)
-
-      expect(item[:attributes]).to have_key(:unit_price)
-      expect(item[:attributes][:unit_price]).to be_an(Float)
-
-      expect(item).to have_key(:relationships)
-      expect(item[:relationships]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:merchant)
-      expect(item[:relationships][:merchant]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:invoice_items)
-      expect(item[:relationships][:invoice_items]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:invoices)
-      expect(item[:relationships][:invoices]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:transactions)
-      expect(item[:relationships][:transactions]).to be_a(Hash)
     end
   end
 
@@ -155,32 +116,7 @@ describe "Items API" do
       expect(merchant_data[:data]).to be_a(Hash)
       expect(merchant_data[:data][:id]).to eq(merchant.id.to_s)
 
-      serializer_structure_check(merchant_data[:data])
-    end
-
-    def serializer_structure_check(merchant)
-      expect(merchant).to have_key(:id)
-      expect(merchant[:id]).to be_a(String)
-
-      expect(merchant).to have_key(:type)
-      expect(merchant[:type]).to be_a(String)
-      expect(merchant[:type]).to eq("merchant")
-
-      expect(merchant).to have_key(:attributes)
-      expect(merchant[:attributes]).to be_a(Hash)
-
-      expect(merchant[:attributes]).to have_key(:name)
-      expect(merchant[:attributes][:name]).to be_a(String)
-
-      expect(merchant[:attributes]).to have_key(:id)
-      expect(merchant[:attributes][:id]).to be_an(Integer)
-
-      expect(merchant).to have_key(:relationships)
-      expect(merchant[:relationships]).to be_a(Hash)
-      expect(merchant[:relationships]).to have_key(:items)
-      expect(merchant[:relationships][:items]).to be_a(Hash)
-      expect(merchant[:relationships]).to have_key(:invoices)
-      expect(merchant[:relationships][:invoices]).to be_a(Hash)
+      merchant_serializer_structure_check(merchant_data[:data])
     end
   end
 
@@ -201,7 +137,7 @@ describe "Items API" do
 
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Hash)
-      serializer_structure_check(item_data[:data])
+      item_serializer_structure_check(item_data[:data])
 
       result_item = Item.find(item_data[:data][:id])
 
@@ -215,7 +151,7 @@ describe "Items API" do
 
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Hash)
-      serializer_structure_check(item_data[:data])
+      item_serializer_structure_check(item_data[:data])
 
       # search by description
 
@@ -226,7 +162,7 @@ describe "Items API" do
 
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Hash)
-      serializer_structure_check(item_data[:data])
+      item_serializer_structure_check(item_data[:data])
 
       result_item = Item.find(item_data[:data][:id])
 
@@ -241,7 +177,7 @@ describe "Items API" do
 
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Hash)
-      serializer_structure_check(item_data[:data])
+      item_serializer_structure_check(item_data[:data])
 
       result_item = Item.find(item_data[:data][:id])
 
@@ -256,7 +192,7 @@ describe "Items API" do
 
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Hash)
-      serializer_structure_check(item_data[:data])
+      item_serializer_structure_check(item_data[:data])
 
       result_item = Item.find(item_data[:data][:id])
 
@@ -271,7 +207,7 @@ describe "Items API" do
       #
       # expect(item_data).to have_key(:data)
       # expect(item_data[:data]).to be_an(Hash)
-      # serializer_structure_check(item_data[:data])
+      # item_serializer_structure_check(item_data[:data])
       #
       # # search by updated_at
       #
@@ -282,7 +218,7 @@ describe "Items API" do
       #
       # expect(item_data).to have_key(:data)
       # expect(item_data[:data]).to be_an(Hash)
-      # serializer_structure_check(item_data[:data])
+      # item_serializer_structure_check(item_data[:data])
     end
 
     it "finds multiple items from case insensitive search" do
@@ -303,7 +239,7 @@ describe "Items API" do
 
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Array)
-      serializer_structure_check(item_data[:data].first)
+      item_serializer_structure_check(item_data[:data].first)
 
       result_item = Item.find(item_data[:data].first[:id])
 
@@ -318,7 +254,7 @@ describe "Items API" do
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Array)
       expect(item_data[:data].size).to eq(3)
-      serializer_structure_check(item_data[:data].first)
+      item_serializer_structure_check(item_data[:data].first)
 
       item_data[:data].each do |item|
         expect([item2, item3, item4].include? Item.find(item[:id])).to be_truthy
@@ -333,7 +269,7 @@ describe "Items API" do
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Array)
       expect(item_data[:data].size).to eq(2)
-      serializer_structure_check(item_data[:data].first)
+      item_serializer_structure_check(item_data[:data].first)
 
       item_data[:data].each do |item|
         expect([item1, item2].include? Item.find(item[:id])).to be_truthy
@@ -349,7 +285,7 @@ describe "Items API" do
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Array)
       expect(item_data[:data].size).to eq(2)
-      serializer_structure_check(item_data[:data].first)
+      item_serializer_structure_check(item_data[:data].first)
 
       item_data[:data].each do |item|
         expect([item1, item2].include? Item.find(item[:id])).to be_truthy
@@ -365,7 +301,7 @@ describe "Items API" do
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Array)
       expect(item_data[:data].size).to eq(2)
-      serializer_structure_check(item_data[:data].first)
+      item_serializer_structure_check(item_data[:data].first)
 
       item_data[:data].each do |item|
         expect([item3, item2].include? Item.find(item[:id])).to be_truthy
@@ -381,7 +317,7 @@ describe "Items API" do
       expect(item_data).to have_key(:data)
       expect(item_data[:data]).to be_an(Array)
       expect(item_data[:data].size).to eq(3)
-      serializer_structure_check(item_data[:data].first)
+      item_serializer_structure_check(item_data[:data].first)
 
       item_data[:data].each do |item|
         expect([item2, item3, item4].include? Item.find(item[:id])).to be_truthy
@@ -389,45 +325,6 @@ describe "Items API" do
 
       # created_at test
       # updated_at test
-    end
-
-    def serializer_structure_check(item)
-      expect(item).to have_key(:id)
-      expect(item[:id]).to be_an(String)
-
-      expect(item).to have_key(:type)
-      expect(item[:type]).to be_an(String)
-      expect(item[:type]).to eq("item")
-
-      expect(item).to have_key(:attributes)
-      expect(item[:attributes]).to be_a(Hash)
-
-      expect(item[:attributes]).to have_key(:id)
-      expect(item[:attributes][:id]).to be_an(Integer)
-
-      expect(item[:attributes]).to have_key(:name)
-      expect(item[:attributes][:name]).to be_an(String)
-
-      expect(item[:attributes]).to have_key(:description)
-      expect(item[:attributes][:description]).to be_an(String)
-
-      expect(item[:attributes]).to have_key(:unit_price)
-      expect(item[:attributes][:unit_price]).to be_an(Float)
-
-      expect(item).to have_key(:relationships)
-      expect(item[:relationships]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:merchant)
-      expect(item[:relationships][:merchant]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:invoice_items)
-      expect(item[:relationships][:invoice_items]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:invoices)
-      expect(item[:relationships][:invoices]).to be_a(Hash)
-
-      expect(item[:relationships]).to have_key(:transactions)
-      expect(item[:relationships][:transactions]).to be_a(Hash)
     end
   end
 end
