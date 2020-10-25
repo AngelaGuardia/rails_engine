@@ -1,20 +1,23 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-
-      get '/items/find_all', to: 'items/search#index'
-      get '/items/find', to: 'items/search#show'
+      namespace :items do
+        get '/find_all', to: 'search#index'
+        get '/find', to: 'search#show'
+      end
       resources :items do
         get :merchants, to: 'items/merchants#show'
       end
 
-      get '/merchants/find_all', to: 'merchants/search#index'
-      get '/merchants/find', to: 'merchants/search#show'
-      get '/merchants/most_revenue', to: 'merchants/business_intelligence#most_revenue'
-      get '/merchants/most_items', to: 'merchants/business_intelligence#most_items'
+      namespace :merchants do
+        get '/find_all', to: 'search#index'
+        get '/find', to: 'search#show'
+        get '/most_revenue', to: 'business_intelligence#most_revenue'
+        get '/most_items', to: 'business_intelligence#most_items'
+      end
       resources :merchants do
-        get :items, to: 'merchants/items#index'
         get :revenue, to: 'merchants/business_intelligence#total_revenue'
+        get :items, to: 'merchants/items#index'
       end
 
       get '/revenue', to: 'merchants/business_intelligence#revenue_over_range'
